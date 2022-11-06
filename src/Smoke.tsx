@@ -1,50 +1,62 @@
-import { useTexture, Instances, Instance } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef } from "react";
+import { Instances, Instance, useGLTF, PositionPoint } from "@react-three/drei"
+import { Euler, useFrame } from "@react-three/fiber";
+import { useRef } from "react";
 import * as THREE from 'three';
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-let particles: ISmokeProps[] = Array.from({ length: 1 }, () => ({
-    factor: 0,
-    speed: THREE.MathUtils.randFloat(0.1, 0.3),
-    z: Math.random() - 0.5
-}))
+
+const COUNT = 5;
 
 interface ISmokeProps {
-    factor: number;
-    speed: number;
-    z: number;
+    delay: number;
+    startPos?: THREE.Vector3;
 }
 
-const smokeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 });
-export default function SmokeParticles() {
-    const smoke = useTexture('https://rawgit.com/marcobiedermann/playground/master/three.js/smoke-particles/dist/assets/images/clouds.png');
+interface ISmokeParticlesProps {
+}
 
-    useEffect(() => {
-        smokeMaterial.map = smoke;
-        smokeMaterial.map.minFilter = THREE.LinearFilter;
-    }, [])
+export default function SmokeParticles() {
+    const { nodes, materials } = useGLTF('./models/smoke/smoke.gltf') as GLTFResult;
 
     return (
         <>
-            <Instances limit={particles.length} material={smokeMaterial}>
-                <planeGeometry />
-                {particles.map((data, i) => (
-                    <Smoke key={i} {...data} />
-                ))}
-            </Instances>
+            <group>
+                <Instances limit={COUNT} material={materials.Smoke} geometry={nodes.Smoke.geometry}>
+                    <Smoke delay={0} />
+                    <Smoke delay={6} />
+                    <Smoke delay={10} />
+                    <Smoke delay={15} />
+                    <Smoke delay={20} />
+                </Instances>
+            </group>
         </>
     )
 }
 
 function Smoke(props: ISmokeProps) {
-    const ref = useRef<any>(null!);
+    const ref = useRef<PositionPoint>(null!);
     useFrame((state, delta) => {
-        if(ref.current.position.y > 4.5) ref.current.position.y = 0;
-        let a = THREE.MathUtils.inverseLerp(0, 4.5, ref.current.position.y);
-        ref.current.scale.setScalar(1 + a);
-        ref.current.position.y = ref.current.position.y + (props.speed * delta);
-        ref.current.position.z = props.z;
+        if (state.clock.getElapsedTime() < props.delay) {
+            ref.current.scale.set(0, 0, 0);
+            return;
+        }
+        if (ref.current.position.y > 7) {
+            ref.current.position.set(0, 0, 0);
+        }
+        let a = THREE.MathUtils.inverseLerp(0, 6.5, ref.current.position.y);
+        const scale = 0.2 + a;
+        ref.current.scale.set(scale, scale, scale);
+        ref.current.position.y = ref.current.position.y + (0.3 * delta);
     })
 
     return <Instance ref={ref} />
+}
+
+type GLTFResult = GLTF & {
+    nodes: {
+        Smoke: THREE.Mesh
+    }
+    materials: {
+        Smoke: THREE.MeshStandardMaterial
+    }
 }
