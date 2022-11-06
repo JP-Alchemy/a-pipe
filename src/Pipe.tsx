@@ -19,15 +19,16 @@ type GLTFResult = GLTF & {
   }
 }
 
-export default function PipeModel(props: JSX.IntrinsicElements['group']) {
+const PipeModel = (props: JSX.IntrinsicElements['group']) => {
   const { nodes, materials } = useGLTF('./models/pipe/pipe.gltf') as GLTFResult
   return (
     <group {...props} dispose={null}>
-      <mesh receiveShadow geometry={nodes.Mesh.geometry} material={materials.Wood} />
-      <mesh receiveShadow geometry={nodes.Mesh_1.geometry} material={materials.Brass} />
-      <mesh receiveShadow geometry={nodes.Mesh_2.geometry} material={materials.Plastic} />
+      <mesh castShadow receiveShadow geometry={nodes.Mesh.geometry} material={materials.Wood} />
+      <mesh castShadow receiveShadow geometry={nodes.Mesh_1.geometry} material={materials.Brass} />
+      <mesh castShadow receiveShadow geometry={nodes.Mesh_2.geometry} material={materials.Plastic} />
     </group>
   )
 }
 
+export default PipeModel;
 useGLTF.preload('/pipe.gltf')
