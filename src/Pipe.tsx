@@ -31,4 +31,4 @@ const PipeModel = (props: JSX.IntrinsicElements['group']) => {
 }
 
 export default PipeModel;
-useGLTF.preload('/pipe.gltf')
+useGLTF.preload('./models/pipe/pipe.gltf')

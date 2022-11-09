@@ -44,10 +44,10 @@ function Smoke({v1 = new THREE.Vector3(), ...props}: ISmokeProps) {
             ref.current.position.copy(props.startPos.current.getWorldPosition(v1));
             return;
         }
-        if (ref.current.position.y > 7) {
+        if (ref.current.position.y > 8.5) {
             ref.current.position.copy(props.startPos.current.getWorldPosition(v1));
         }
-        let a = THREE.MathUtils.inverseLerp(0, 6.5, ref.current.position.y);
+        let a = THREE.MathUtils.inverseLerp(0, 7.5, ref.current.position.y);
         const scale = a;
         ref.current.scale.set(scale, scale, scale);
         ref.current.position.y = ref.current.position.y + (0.3 * delta);

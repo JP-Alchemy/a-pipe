@@ -9,9 +9,9 @@ root.render(
   <Canvas
     shadows
     camera={{
-      fov: 60,
-      position: [0, 2.24, 6.23],
-      zoom: 0.75,
+      fov: 65.5,
+      position: [0, 6.1, 24.2],
+      rotation: [-Math.PI * 0.05,0,0]
     }}
   >
     <Experience />
